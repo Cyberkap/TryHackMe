@@ -1,5 +1,7 @@
 import os
-import openai
+from openai import OpenAI
+
+client = OpenAI()
 import boto3
 import json
 
@@ -26,14 +28,12 @@ def lambda_handler(event, context):
             }
 
         # Call OpenAI GPT-3.5-turbo
-        response = openai.Completion.create(
-            model="gpt-3.5-turbo",
-            messages=[
-                {"role": "system", "content": "You are a helpful assistant."},
-                {"role": "user", "content": user_input},
-                {"role": "assistant", "content": json.dumps(securityhub_findings)}
-            ]
-        )
+        response = client.completions.create(model="gpt-3.5-turbo",
+        messages=[
+            {"role": "system", "content": "You are a helpful assistant."},
+            {"role": "user", "content": user_input},
+            {"role": "assistant", "content": json.dumps(securityhub_findings)}
+        ])
 
         # Extract response from OpenAI
         chat_gpt_response = response['choices'][0]['message']['content']
